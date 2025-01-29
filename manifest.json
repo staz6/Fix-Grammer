@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Fix Grammar",
+  "description": "Select text and fix grammar using Gemini API.",
+  "version": "1.0",
+  "permissions": ["contextMenus", "scripting", "activeTab", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon.png",
+    "48": "icons/icon.png",
+    "128": "icons/icon.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.png"
+  }
+}
