@@ -19,7 +19,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 async function fixGrammarWithOpenAI(text) {
   const data = `fix grammar: ${text}`;
-  const apiKey = 'AIzaSyCKQghhg7mpVs9xPc-NNMDBTJiFLsYnRGE';  // Replace with your actual API key
+  const apiKey = 'AIzaSyCKQghhg7mpVs9xPc-NNMDBTJiFLsYnRGE'; 
+
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
@@ -38,14 +39,10 @@ async function fixGrammarWithOpenAI(text) {
     }
 
     const result = await response.json();
-    console.log(result); // Logs the full response to the console
-
-    // Extract the fixed text from the response (inside candidates -> content -> parts -> text)
     const fixedText = result.candidates[0].content.parts[0].text;
 
     return fixedText;
   } catch (error) {
-    console.error("Error calling OpenAI API:", error);
     return "An error occurred while fixing the grammar.";
   }
 }
