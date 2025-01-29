@@ -20,6 +20,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 async function fixGrammarWithOpenAI(text) {
   const data = `fix grammar: ${text}`;
   const apiKey = 'AIzaSyCKQghhg7mpVs9xPc-NNMDBTJiFLsYnRGE'; 
+
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
@@ -38,7 +39,6 @@ async function fixGrammarWithOpenAI(text) {
     }
 
     const result = await response.json();
-
     const fixedText = result.candidates[0].content.parts[0].text;
 
     return fixedText;
