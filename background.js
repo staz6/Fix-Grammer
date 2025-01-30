@@ -9,13 +9,75 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "fixGrammar" && info.selectionText) {
     const fixedText = await fixGrammarWithOpenAI(info.selectionText);
+
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      func: (text) => alert(`Fixed Text: ${text}`),
-      args: [fixedText]
+      func: (text) => {
+        document.getElementById("aiGrammarPopup")?.remove();
+
+        const popup = document.createElement("div");
+        popup.id = "aiGrammarPopup";
+        popup.innerText = text;
+        document.body.appendChild(popup);
+
+        const closeButton = document.createElement("button");
+        closeButton.innerHTML = "&times;"; 
+        closeButton.style.position = "absolute";
+        closeButton.style.top = "6px";
+        closeButton.style.right = "6px";
+        closeButton.style.border = "none";
+        closeButton.style.background = "none";
+        closeButton.style.color = "#888";
+        closeButton.style.fontSize = "18px";
+        closeButton.style.cursor = "pointer";
+        closeButton.addEventListener("click", () => {
+          popup.remove(); 
+        });
+
+        popup.appendChild(closeButton);
+        Object.assign(popup.style, {
+          position: "absolute",
+          backgroundColor: "#fff",
+          color: "#333",
+          padding: "12px 16px",
+          borderRadius: "8px",
+          boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.15)",
+          zIndex: "10000",
+          maxWidth: "300px",
+          wordWrap: "break-word",
+          border: "1px solid #e0e0e0",
+          fontFamily: "'Roboto', sans-serif",
+          fontSize: "14px",
+          lineHeight: "1.5",
+        });
+
+        let closeTimeout;
+
+        popup.addEventListener('mouseenter', () => {
+          clearTimeout(closeTimeout); 
+        });
+
+        popup.addEventListener('mouseleave', () => {
+          closeTimeout = setTimeout(() => popup.remove(), 5000);
+        });
+
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        popup.style.top = `${rect.top + window.scrollY - popup.offsetHeight - 12}px`;
+        popup.style.left = `${rect.left + window.scrollX}px`;
+
+        closeTimeout = setTimeout(() => popup.remove(), 5000);
+      },
+      args: [fixedText],
     });
   }
 });
+
+
+
 
 async function fixGrammarWithOpenAI(text) {
   const data = `fix grammar: ${text}`;
