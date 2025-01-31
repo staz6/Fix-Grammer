@@ -66,8 +66,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        popup.style.top = `${rect.top + window.scrollY - popup.offsetHeight - 12}px`;
-        popup.style.left = `${rect.left + window.scrollX}px`;
+        popup.style.top = `${rect.bottom + window.scrollY + 12}px`;
+        popup.style.left = `${rect.left + window.scrollX}px`;        
 
         closeTimeout = setTimeout(() => popup.remove(), 5000);
       },
