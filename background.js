@@ -21,7 +21,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         document.body.appendChild(popup);
 
         const closeButton = document.createElement("button");
-        closeButton.innerHTML = "&times;"; 
+        closeButton.innerHTML = "&times;";
         closeButton.style.position = "absolute";
         closeButton.style.top = "6px";
         closeButton.style.right = "6px";
@@ -31,10 +31,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         closeButton.style.fontSize = "18px";
         closeButton.style.cursor = "pointer";
         closeButton.addEventListener("click", () => {
-          popup.remove(); 
+          popup.remove();
         });
 
         popup.appendChild(closeButton);
+
         Object.assign(popup.style, {
           position: "absolute",
           backgroundColor: "#fff",
@@ -49,15 +50,17 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
           fontFamily: "'Roboto', sans-serif",
           fontSize: "14px",
           lineHeight: "1.5",
+          maxHeight: "300px",
+          overflowY: "auto",
         });
 
         let closeTimeout;
 
-        popup.addEventListener('mouseenter', () => {
-          clearTimeout(closeTimeout); 
+        popup.addEventListener("mouseenter", () => {
+          clearTimeout(closeTimeout);
         });
 
-        popup.addEventListener('mouseleave', () => {
+        popup.addEventListener("mouseleave", () => {
           closeTimeout = setTimeout(() => popup.remove(), 5000);
         });
 
@@ -66,8 +69,28 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        popup.style.top = `${rect.bottom + window.scrollY + 12}px`;
-        popup.style.left = `${rect.left + window.scrollX}px`;        
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+
+        document.body.appendChild(popup);
+        const popupHeight = popup.offsetHeight;
+        const popupWidth = popup.offsetWidth;
+        document.body.removeChild(popup);
+
+        const spaceBelow = viewportHeight - rect.bottom;
+        const spaceAbove = rect.top;
+
+        if (spaceBelow > popupHeight + 12) {
+          popup.style.top = `${rect.bottom + window.scrollY + 12}px`;
+        } else if (spaceAbove > popupHeight + 12) {
+          popup.style.top = `${rect.top + window.scrollY - popupHeight - 12}px`;
+        } else {
+          popup.style.top = `${(viewportHeight - popupHeight) / 2 + window.scrollY}px`;
+        }
+
+        popup.style.left = `${(viewportWidth - popupWidth) / 2 + window.scrollX}px`;
+
+        document.body.appendChild(popup);
 
         closeTimeout = setTimeout(() => popup.remove(), 5000);
       },
